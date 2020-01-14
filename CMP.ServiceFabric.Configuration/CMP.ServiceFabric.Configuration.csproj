@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <VersionPrefix>0.1.1</VersionPrefix>
+    <VersionSuffix>alpha</VersionSuffix>
+    <PackageId>CMP.ServiceFabric.Configuration</PackageId>
+    <Authors>CDON</Authors>
+    <PackageIconUrl></PackageIconUrl>
+    <RepositoryUrl>https://github.com/cdon-dev/CMP.ServiceFabric.Configuration</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/cdon-dev/CMP.ServiceFabric.Configuration</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>cdon,service fabric,configuration</PackageTags>
+    <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
+    <Product>CMP.ServiceFabric.Configuration</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.1" />
+    <PackageReference Include="Microsoft.ServiceFabric" Version="6.5.677" />
+    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Configuration" Version="3.4.677" />
+    <PackageReference Include="NetEscapades.Configuration.Yaml" Version="1.6.0" />
+  </ItemGroup>
+
+</Project>
