@@ -5,5 +5,5 @@ Opinionated configuration providers setup for .NET Core and Service Fabric.
 
 
 ```csharp
-var config = new ConfigurationBuilder().AddCmpConfiguration(isInCluster);
+var config = new ConfigurationBuilder().AddCmpConfiguration();
 ```
