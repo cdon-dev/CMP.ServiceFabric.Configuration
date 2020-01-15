@@ -6,7 +6,7 @@ namespace CMP.ServiceFabric.Configuration
 {
     public static class Extensions
     {
-        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, bool isInCluster)
+        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, bool isInCluster = true)
         {
             configBuilder.AddEnvironmentVariables();
             configBuilder.AddServiceFabricSettings(isInCluster);
@@ -16,7 +16,7 @@ namespace CMP.ServiceFabric.Configuration
             return configBuilder.Build();
         }
 
-        private static void AddServiceFabricSettings(this IConfigurationBuilder configBuilder, bool isInCluster)
+        private static void AddServiceFabricSettings(this IConfigurationBuilder configBuilder, bool isInCluster = true)
         {
             if (isInCluster)
             {
