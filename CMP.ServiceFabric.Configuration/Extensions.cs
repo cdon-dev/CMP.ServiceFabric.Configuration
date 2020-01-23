@@ -16,7 +16,7 @@ namespace CMP.ServiceFabric.Configuration
             return configBuilder.Build();
         }
 
-        private static void AddServiceFabricSettings(this IConfigurationBuilder configBuilder, bool isInCluster = true)
+        private static void AddServiceFabricSettings(this IConfigurationBuilder configBuilder, bool isInCluster)
         {
             if (isInCluster)
             {
