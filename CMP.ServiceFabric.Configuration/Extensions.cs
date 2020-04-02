@@ -67,6 +67,7 @@ namespace CMP.ServiceFabric.Configuration
         {
             var config = configBuilder.Build();
             var connectionString = config["ConnectionStrings:CmpAzureAppConfig"];
+            var environment = config["ASPNETCORE_ENVIRONMENT"] ?? LabelFilter.Null;
 
             if (!string.IsNullOrEmpty(connectionString))
             {
@@ -79,7 +80,11 @@ namespace CMP.ServiceFabric.Configuration
                             // Update all settings when the value of given key changes
                             refresh.Register(version, true)
                                 .SetCacheExpiration(TimeSpan.FromSeconds(1));
-                        });
+                        })
+                        // Load configuration values with no label
+                        .Select(KeyFilter.Any)
+                        // Override with any configuration values specific to current hosting env
+                        .Select(KeyFilter.Any, environment);
                     // Enable on demand dynamic configuration in .Net Core console app
                     Refresher = options.GetRefresher();
                 });
