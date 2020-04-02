@@ -1,17 +1,22 @@
-﻿using System.Fabric;
+﻿using System;
+using System.Fabric;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.ServiceFabric.AspNetCore.Configuration;
 
 namespace CMP.ServiceFabric.Configuration
 {
     public static class Extensions
     {
-        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, bool isInCluster = true)
+        public static IConfigurationRefresher Refresher { get; private set; }
+
+        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, string version, bool isInCluster = true)
         {
             configBuilder.AddEnvironmentVariables();
             configBuilder.AddServiceFabricSettings(isInCluster);
             configBuilder.AddAppSettings();
             configBuilder.AddVaultSettings();
+            configBuilder.AddAzureAppSettings(version);
 
             return configBuilder.Build();
         }
@@ -57,5 +62,23 @@ namespace CMP.ServiceFabric.Configuration
 
         private static bool HasVaultSettings(string vault, string clientId, string clientSecret)
             => vault != null && clientId != null && clientSecret != null;
+
+        public static void AddAzureAppSettings(this IConfigurationBuilder configBuilder, string version)
+        {
+            var config = configBuilder.Build();
+            configBuilder.AddAzureAppConfiguration(options =>
+            {   
+                options.Connect(config["ConnectionStrings:CmpAzureAppConfig"])
+                    // Setup dynamic refresh
+                    .ConfigureRefresh(refresh =>
+                    {
+                        // Update all settings when the value of given key changes
+                        refresh.Register(version, true)
+                            .SetCacheExpiration(TimeSpan.FromSeconds(1));
+                    });
+                // Enable on demand dynamic configuration in .Net Core console app
+                Refresher = options.GetRefresher();
+            });
+        }
     }
 }
