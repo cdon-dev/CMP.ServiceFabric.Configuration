@@ -66,13 +66,13 @@ namespace CMP.ServiceFabric.Configuration
         public static void AddAzureAppSettings(this IConfigurationBuilder configBuilder, string version)
         {
             var config = configBuilder.Build();
-            var appConfigConnection = config["ConnectionStrings:CmpAzureAppConfig"];
+            var connectionString = config["ConnectionStrings:CmpAzureAppConfig"];
 
-            if (!string.IsNullOrEmpty(appConfigConnection))
+            if (!string.IsNullOrEmpty(connectionString))
             {
                 configBuilder.AddAzureAppConfiguration(options =>
                 {
-                    options.Connect(appConfigConnection)
+                    options.Connect(connectionString)
                         // Setup dynamic refresh
                         .ConfigureRefresh(refresh =>
                         {
