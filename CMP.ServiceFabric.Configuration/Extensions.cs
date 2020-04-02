@@ -66,19 +66,24 @@ namespace CMP.ServiceFabric.Configuration
         public static void AddAzureAppSettings(this IConfigurationBuilder configBuilder, string version)
         {
             var config = configBuilder.Build();
-            configBuilder.AddAzureAppConfiguration(options =>
-            {   
-                options.Connect(config["ConnectionStrings:CmpAzureAppConfig"])
-                    // Setup dynamic refresh
-                    .ConfigureRefresh(refresh =>
-                    {
-                        // Update all settings when the value of given key changes
-                        refresh.Register(version, true)
-                            .SetCacheExpiration(TimeSpan.FromSeconds(1));
-                    });
-                // Enable on demand dynamic configuration in .Net Core console app
-                Refresher = options.GetRefresher();
-            });
+            var appConfigConnection = config["ConnectionStrings:CmpAzureAppConfig"];
+
+            if (!string.IsNullOrEmpty(appConfigConnection))
+            {
+                configBuilder.AddAzureAppConfiguration(options =>
+                {
+                    options.Connect(appConfigConnection)
+                        // Setup dynamic refresh
+                        .ConfigureRefresh(refresh =>
+                        {
+                            // Update all settings when the value of given key changes
+                            refresh.Register(version, true)
+                                .SetCacheExpiration(TimeSpan.FromSeconds(1));
+                        });
+                    // Enable on demand dynamic configuration in .Net Core console app
+                    Refresher = options.GetRefresher();
+                });
+            }
         }
     }
 }
