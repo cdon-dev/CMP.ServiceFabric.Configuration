@@ -10,13 +10,13 @@ namespace CMP.ServiceFabric.Configuration
     {
         public static IConfigurationRefresher Refresher { get; private set; }
 
-        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, string version, bool isInCluster = true)
+        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, bool isInCluster = true)
         {
             configBuilder.AddEnvironmentVariables();
             configBuilder.AddServiceFabricSettings(isInCluster);
             configBuilder.AddAppSettings();
             configBuilder.AddVaultSettings();
-            configBuilder.AddAzureAppSettings(version);
+            configBuilder.AddAzureAppSettings();
 
             return configBuilder.Build();
         }
@@ -63,7 +63,7 @@ namespace CMP.ServiceFabric.Configuration
         private static bool HasVaultSettings(string vault, string clientId, string clientSecret)
             => vault != null && clientId != null && clientSecret != null;
 
-        public static void AddAzureAppSettings(this IConfigurationBuilder configBuilder, string version)
+        public static void AddAzureAppSettings(this IConfigurationBuilder configBuilder)
         {
             var config = configBuilder.Build();
             var connectionString = config["ConnectionStrings:CmpAzureAppConfig"];
@@ -78,7 +78,7 @@ namespace CMP.ServiceFabric.Configuration
                         .ConfigureRefresh(refresh =>
                         {
                             // Update all settings when the value of given key changes
-                            refresh.Register(version, true)
+                            refresh.Register("RefreshVersion", true)
                                 .SetCacheExpiration(TimeSpan.FromSeconds(1));
                         })
                         // Load configuration values with no label
