@@ -79,7 +79,7 @@ namespace CMP.ServiceFabric.Configuration
                         {
                             // Update all settings when the value of given key changes
                             refresh.Register("RefreshVersion", true)
-                                .SetCacheExpiration(TimeSpan.FromSeconds(1));
+                                .SetCacheExpiration(TimeSpan.FromMinutes(5));
                         })
                         // Load configuration values with no label
                         .Select(KeyFilter.Any)
