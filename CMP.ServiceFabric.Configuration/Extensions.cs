@@ -10,13 +10,13 @@ namespace CMP.ServiceFabric.Configuration
     {
         public static IConfigurationRefresher Refresher { get; private set; }
 
-        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, bool isInCluster = true)
+        public static IConfigurationRoot AddCmpConfiguration(this IConfigurationBuilder configBuilder, bool isInCluster = true, string filePathOfflineCache = "")
         {
             configBuilder.AddEnvironmentVariables();
             configBuilder.AddServiceFabricSettings(isInCluster);
             configBuilder.AddAppSettings();
             configBuilder.AddVaultSettings();
-            configBuilder.AddAzureAppSettings();
+            configBuilder.AddAzureAppSettings(filePathOfflineCache);
 
             return configBuilder.Build();
         }
@@ -63,7 +63,7 @@ namespace CMP.ServiceFabric.Configuration
         private static bool HasVaultSettings(string vault, string clientId, string clientSecret)
             => vault != null && clientId != null && clientSecret != null;
 
-        public static void AddAzureAppSettings(this IConfigurationBuilder configBuilder)
+        public static void AddAzureAppSettings(this IConfigurationBuilder configBuilder, string filePathOfflineCache)
         {
             var config = configBuilder.Build();
             var connectionString = config["ConnectionStrings:CmpAzureAppConfig"];
@@ -85,6 +85,13 @@ namespace CMP.ServiceFabric.Configuration
                         .Select(KeyFilter.Any)
                         // Override with any configuration values specific to current hosting env
                         .Select(KeyFilter.Any, environment);
+
+                    if (!string.IsNullOrEmpty(filePathOfflineCache))
+                    {
+                        // Use the custom IOfflineCache implementation
+                        options.SetOfflineCache(new LocalFileOfflineCache(filePathOfflineCache));
+                    }
+
                     // Enable on demand dynamic configuration in .Net Core console app
                     Refresher = options.GetRefresher();
                 });
